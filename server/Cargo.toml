@@ -1,0 +1,19 @@
+[package]
+name = "starpixel"
+version = "0.1.0"
+authors = ["Ilya Atamas <stackdumper@gmail.com>"]
+edition = "2018"
+publish = false
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+specs = {version = "0.15.0", features = ["shred-derive", "serde", "uuid_entity"]}
+shred = "0.9.2"
+specs-derive = "0.4.0"
+cgmath = {version = "0.17.0", features = ["serde"]}
+fps_clock = "2.0.0"
+ws = "0.8.1"
+serde = "1.0.97"
+serde_json = "1.0.40"
+rand = "0.7"
