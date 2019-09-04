@@ -1,11 +1,9 @@
 [package]
-name = "starpixel"
+name = "empty-spaces-server"
 version = "0.1.0"
 authors = ["Ilya Atamas <stackdumper@gmail.com>"]
 edition = "2018"
 publish = false
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 specs = {version = "0.15.0", features = ["shred-derive", "serde", "uuid_entity"]}
