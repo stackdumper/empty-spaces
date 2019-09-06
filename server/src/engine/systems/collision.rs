@@ -95,9 +95,13 @@ impl<'a> System<'a> for Collision {
     type SystemData = CollisionData<'a>;
 
     fn run(&mut self, mut data: Self::SystemData) {
-        for (source_entity, _) in (&data.entities, &data.position).join() {
-            for (target_entity, _) in (&data.entities, &data.position).join() {
-                if source_entity.id() == target_entity.id() {
+        for (source_entity, sp) in (&data.entities, &data.position).join() {
+            for (target_entity, tp) in (&data.entities, &data.position).join() {
+                // skip self collision
+                // skip distances bigger than needed for collision
+                if source_entity.id() == target_entity.id()
+                    || (tp.data - sp.data).magnitude() > 1.42
+                {
                     continue;
                 }
 
@@ -127,8 +131,6 @@ impl<'a> System<'a> for Collision {
 
                                 let impulse_scalar = (-(1.0 + restitution) * normal_vector) / 2.0;
                                 let impulse = manifold.normal * impulse_scalar;
-
-                                println!("impulse, {:?}", impulse);
 
                                 if let Some(source_velocity_mut) =
                                     data.velocity.get_mut(source_entity)

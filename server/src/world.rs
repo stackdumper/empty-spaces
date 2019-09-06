@@ -23,18 +23,18 @@ pub fn create_world() -> (World, Dispatcher<'static, 'static>) {
         .with(systems::Sync::new("127.0.0.1:8000"), "sync", &["collision"])
         .build();
 
-    for x in 0..3 {
-        for y in 0..3 {
+    for x in 0..10 {
+        for y in 0..10 {
             world
                 .create_entity()
-                .with(components::Force {
-                    data: types::Vector::new(0.0, 0.0),
-                })
                 .with(components::Velocity {
                     data: types::Vector::new(0.0, 0.0),
                 })
+                .with(components::Force {
+                    data: types::Vector::new(0.0, 0.0),
+                })
                 .with(components::Position {
-                    data: types::Vector::new(1.0 + (x * 5) as f64, 1.0 + (y * 5) as f64),
+                    data: types::Vector::new((x as f64) * 2.0, (y as f64) * 2.0),
                 })
                 .with(components::Mass { data: 1.0 })
                 .build();

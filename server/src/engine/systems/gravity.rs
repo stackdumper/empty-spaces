@@ -10,11 +10,10 @@ pub struct Gravity;
 #[derive(SystemData)]
 pub struct GravityData<'a> {
     clock: Read<'a, resources::Clock>,
-    position: ReadStorage<'a, components::Position>,
-    mass: ReadStorage<'a, components::Mass>,
-    force: WriteStorage<'a, components::Force>,
-    velocity: WriteStorage<'a, components::Velocity>,
     entities: Entities<'a>,
+    position: ReadStorage<'a, components::Position>,
+    force: WriteStorage<'a, components::Force>,
+    mass: ReadStorage<'a, components::Mass>,
 }
 
 impl<'a> System<'a> for Gravity {
@@ -24,13 +23,8 @@ impl<'a> System<'a> for Gravity {
         for (source_entity, source_mass, source_position) in
             (&data.entities, &data.mass, &data.position).join()
         {
-            for (target_entity, target_mass, target_position, target_force) in (
-                &data.entities,
-                &data.mass,
-                &data.position,
-                &mut data.velocity,
-            )
-                .join()
+            for (target_entity, target_mass, target_position, target_force) in
+                (&data.entities, &data.mass, &data.position, &mut data.force).join()
             {
                 if source_entity.id() == target_entity.id() {
                     continue;
@@ -41,7 +35,7 @@ impl<'a> System<'a> for Gravity {
                 let total_mass = source_mass.data + target_mass.data;
                 let total_distance = source_position.data.distance(target_position.data);
 
-                if total_distance <= 1.0 {
+                if total_distance / total_mass <= 2.0 {
                     continue;
                 }
 
