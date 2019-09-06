@@ -10,3 +10,9 @@ pub struct Position {
 impl Component for Position {
     type Storage = VecStorage<Self>;
 }
+
+impl Position {
+    pub fn new(data: Vector) -> Self {
+        Self { data }
+    }
+}

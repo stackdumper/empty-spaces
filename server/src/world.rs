@@ -10,6 +10,7 @@ pub fn create_world() -> (World, Dispatcher<'static, 'static>) {
     world.register::<components::Force>();
     world.register::<components::Mass>();
     world.register::<components::Velocity>();
+    world.register::<components::Structure>();
 
     // add resources
     world.insert(resources::Clock::new(1.0));
@@ -19,27 +20,9 @@ pub fn create_world() -> (World, Dispatcher<'static, 'static>) {
         .with(systems::Gravity, "gravity", &[])
         .with(systems::Force, "force", &["gravity"])
         .with(systems::Velocity, "velocity", &["force"])
-        .with(systems::Collision, "collision", &["velocity"])
+        .with(systems::Collision::new(), "collision", &["velocity"])
         .with(systems::Sync::new("127.0.0.1:8000"), "sync", &["collision"])
         .build();
-
-    for x in 0..10 {
-        for y in 0..10 {
-            world
-                .create_entity()
-                .with(components::Velocity {
-                    data: types::Vector::new(0.0, 0.0),
-                })
-                .with(components::Force {
-                    data: types::Vector::new(0.0, 0.0),
-                })
-                .with(components::Position {
-                    data: types::Vector::new((x as f64) * 2.0, (y as f64) * 2.0),
-                })
-                .with(components::Mass { data: 1.0 })
-                .build();
-        }
-    }
 
     return (world, dispatcher);
 }

@@ -9,3 +9,9 @@ pub struct Mass {
 impl Component for Mass {
     type Storage = VecStorage<Self>;
 }
+
+impl Mass {
+    pub fn new(data: f64) -> Self {
+        Self { data }
+    }
+}

@@ -37,21 +37,15 @@ impl Sync {
 #[derive(SystemData)]
 pub struct SyncData<'a> {
     position: ReadStorage<'a, components::Position>,
-    velocity: ReadStorage<'a, components::Velocity>,
-    mass: ReadStorage<'a, components::Mass>,
+    structure: ReadStorage<'a, components::Structure>,
 }
 
 impl<'a> System<'a> for Sync {
     type SystemData = SyncData<'a>;
 
     fn run(&mut self, data: Self::SystemData) {
-        let ents: Vec<(
-            &components::Position,
-            &components::Velocity,
-            &components::Mass,
-        )> = (&data.position, &data.velocity, &data.mass)
-            .join()
-            .collect();
+        let ents: Vec<(&components::Position, &components::Structure)> =
+            (&data.position, &data.structure).join().collect();
 
         // send entities to client
         let message = ws::Message::Text(to_string(&ents).unwrap());

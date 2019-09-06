@@ -10,3 +10,9 @@ pub struct Force {
 impl Component for Force {
     type Storage = VecStorage<Self>;
 }
+
+impl Force {
+    pub fn new(data: Vector) -> Self {
+        Self { data }
+    }
+}

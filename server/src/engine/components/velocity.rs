@@ -10,3 +10,9 @@ pub struct Velocity {
 impl Component for Velocity {
     type Storage = VecStorage<Self>;
 }
+
+impl Velocity {
+    pub fn new(data: Vector) -> Self {
+        Self { data }
+    }
+}
