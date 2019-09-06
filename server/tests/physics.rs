@@ -1,6 +1,6 @@
+use empty_spaces::engine::{components, types::Vector};
+use empty_spaces::world;
 use specs::{Builder, WorldExt};
-use starpixel::engine::{components, types::Vector};
-use starpixel::world;
 
 #[test]
 fn physics() {
