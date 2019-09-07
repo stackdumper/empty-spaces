@@ -35,9 +35,10 @@ impl<'a> System<'a> for Gravity {
                 let total_mass = source_mass.data + target_mass.data;
                 let total_distance = source_position.data.distance(target_position.data);
 
-                if total_distance / total_mass <= 2.0 {
-                    continue;
-                }
+                // // needs to be tuned
+                // if total_distance / total_mass > 10.0 {
+                //     continue;
+                // }
 
                 let grav_amount = (G * total_mass) / total_distance.powf(2.0);
                 let grav_force =

@@ -1,4 +1,5 @@
 import * as PIXI from 'pixi.js'
+import * as d3 from 'd3'
 
 window.addEventListener('load', () => {
   // setup pixi
@@ -9,9 +10,9 @@ window.addEventListener('load', () => {
   })
   document.body.appendChild(app.view)
   app.renderer.backgroundColor = 0x0a1215
-  app.renderer.resize(document.body.clientWidth, document.body.clientHeight)
+  app.renderer.resize(document.body.clientWidth, document.body.clientHeight * 2)
   window.addEventListener('resize', () => {
-    app.renderer.resize(document.body.clientWidth, document.body.clientHeight)
+    app.renderer.resize(document.body.clientWidth, document.body.clientHeight * 2)
   })
 
   // setup socket
@@ -29,9 +30,19 @@ window.addEventListener('load', () => {
   )
 
   // update entities
-  let scale = 10
+  let scale = 5
+
+  let count = 0
+
+  setInterval(() => {
+    console.log(count)
+
+    count = 0
+  }, 1000)
 
   socket.addEventListener('message', (e) => {
+    count += 1
+
     app.stage.children = []
 
     let entities = JSON.parse(e.data) as [
@@ -61,4 +72,18 @@ window.addEventListener('load', () => {
       entity.position.y = position.data.y * scale
     })
   })
+
+  d3.select('#root').call(
+    d3
+      .zoom()
+      // .scaleExtent([1, 8])
+      .on('zoom', zoom),
+  )
+
+  function zoom(e) {
+    app.stage.position.x = d3.event.transform.x
+    app.stage.position.y = d3.event.transform.y
+    app.stage.scale.x = d3.event.transform.k
+    app.stage.scale.y = d3.event.transform.k
+  }
 })

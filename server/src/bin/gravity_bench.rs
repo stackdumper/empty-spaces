@@ -93,6 +93,6 @@ fn bench_1000_entities(b: &mut test::Bencher) {
     }
 
     b.iter(|| {
-        dispatcher.dispatch(&mut world);
+        dispatcher.dispatch_par(&mut world);
     });
 }

@@ -44,13 +44,13 @@ impl<'a> System<'a> for Sync {
     type SystemData = SyncData<'a>;
 
     fn run(&mut self, data: Self::SystemData) {
-        let ents: Vec<(&components::Position, &components::Structure)> =
-            (&data.position, &data.structure).join().collect();
-
-        // send entities to client
-        let message = ws::Message::Text(to_string(&ents).unwrap());
-
         if let Some(connection) = self.out.lock().unwrap().deref() {
+            let ents: Vec<(&components::Position, &components::Structure)> =
+                (&data.position, &data.structure).join().collect();
+
+            // send entities to client
+            let message = ws::Message::Text(to_string(&ents).unwrap());
+
             let _ = connection.broadcast(message);
         }
     }

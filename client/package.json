@@ -10,6 +10,7 @@
     "format": "prettier --write './!(node_modules|build)/**/*.{ts,tsx,js,jsx}'"
   },
   "dependencies": {
+    "d3": "^5.12.0",
     "pixi.js": "^5.1.2"
   },
   "devDependencies": {

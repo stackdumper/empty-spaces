@@ -21,6 +21,7 @@ impl Structure {
     pub fn merge_structure(&mut self, self_position: &Vector, other_sections: Vec<Vector>) {
         // translate sections into local coordinate space
         // and append them to existing sections
+
         other_sections.into_iter().for_each(|mut v| {
             v.x = (v.x - self_position.x).round();
             v.y = (v.y - self_position.y).round();

@@ -1,4 +1,5 @@
 use super::super::types::Vector;
+use cgmath::InnerSpace;
 
 const SIZE: f64 = 1.0;
 
@@ -7,6 +8,16 @@ pub struct AABB {
     position: Vector,
     min: Vector,
     max: Vector,
+}
+
+pub fn get_aabb_single(p: &Vector) -> AABB {
+    let aabb = AABB {
+        position: p.clone(),
+        min: Vector::new(p.x - SIZE / 2.0, p.y - SIZE / 2.0),
+        max: Vector::new(p.x + SIZE / 2.0, p.y + SIZE / 2.0),
+    };
+
+    aabb
 }
 
 pub fn get_aabb(p: &Vector, sections: &Vec<Vector>) -> AABB {
@@ -33,7 +44,7 @@ pub fn get_aabb(p: &Vector, sections: &Vec<Vector>) -> AABB {
     aabb
 }
 
-pub fn has_collision(a: &AABB, b: &AABB) -> bool {
+pub fn might_collide(a: &AABB, b: &AABB) -> bool {
     if a.max.x < b.min.x || a.min.x > b.max.x {
         return false;
     }
@@ -42,6 +53,22 @@ pub fn has_collision(a: &AABB, b: &AABB) -> bool {
     }
 
     return true;
+}
+
+pub fn has_collision(a_sections: &Vec<Vector>, b_sections: &Vec<Vector>) -> bool {
+    for a_section in a_sections {
+        let a = get_aabb_single(&a_section);
+        for b_section in b_sections {
+            if (b_section - a_section).magnitude() <= 1.0 {
+                let b = get_aabb_single(&b_section);
+
+                if might_collide(&a, &b) {
+                    return true;
+                }
+            }
+        }
+    }
+    false
 }
 
 pub fn get_collision_normal(a: &AABB, b: &AABB) -> Vector {
