@@ -8,7 +8,6 @@ pub fn create_world() -> (World, Dispatcher<'static, 'static>) {
     // register components
     world.register::<components::Position>();
     world.register::<components::Force>();
-    world.register::<components::Mass>();
     world.register::<components::Velocity>();
     world.register::<components::Structure>();
 

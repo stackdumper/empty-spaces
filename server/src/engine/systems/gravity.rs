@@ -1,51 +1,47 @@
 use super::super::{components, resources};
 use cgmath::{InnerSpace, MetricSpace};
-use shred::{ResourceId, World};
-use specs::{Entities, Join, Read, ReadStorage, System, SystemData, WriteStorage};
+use specs::{Entities, Read, ReadStorage, System, WriteStorage};
 
 const G: f64 = 6.67e-11f64;
 
 pub struct Gravity;
 
-#[derive(SystemData)]
-pub struct GravityData<'a> {
-    clock: Read<'a, resources::Clock>,
-    entities: Entities<'a>,
-    position: ReadStorage<'a, components::Position>,
-    force: WriteStorage<'a, components::Force>,
-    mass: ReadStorage<'a, components::Mass>,
-}
-
 impl<'a> System<'a> for Gravity {
-    type SystemData = GravityData<'a>;
+    type SystemData = (
+        Read<'a, resources::Clock>,
+        Entities<'a>,
+        ReadStorage<'a, components::Structure>,
+        ReadStorage<'a, components::Position>,
+        WriteStorage<'a, components::Force>,
+    );
 
-    fn run(&mut self, mut data: Self::SystemData) {
-        for (source_entity, source_mass, source_position) in
-            (&data.entities, &data.mass, &data.position).join()
-        {
-            for (target_entity, target_mass, target_position, target_force) in
-                (&data.entities, &data.mass, &data.position, &mut data.force).join()
-            {
-                if source_entity.id() == target_entity.id() {
-                    continue;
-                }
-                // grav_force = (G * total_mass) / total_distance ^ 2
-                // https://www.wikihow.com/Calculate-Force-of-Gravity
+    fn run(&mut self, (clock, entity, structure, position, mut force): Self::SystemData) {
+        use rayon::iter::ParallelIterator;
+        use specs::{Join, ParJoin};
 
-                let total_mass = source_mass.data + target_mass.data;
-                let total_distance = source_position.data.distance(target_position.data);
+        (&entity, &structure, &position, &mut force)
+            .par_join()
+            .for_each(
+                |(source_entity, source_structure, source_position, source_force)| {
+                    (&entity, &structure, &position).join().for_each(
+                        |(target_entity, target_structure, target_position)| {
+                            if source_entity.id() == target_entity.id() {
+                                return;
+                            }
 
-                // // needs to be tuned
-                // if total_distance / total_mass > 10.0 {
-                //     continue;
-                // }
+                            let total_mass =
+                                source_structure.get_mass() + target_structure.get_mass();
+                            let total_distance =
+                                source_position.data.distance(target_position.data);
+                            let direction =
+                                (source_position.data - target_position.data).normalize();
+                            let amount = (G * total_mass) / total_distance.powf(2.0);
+                            let grav_force = direction * amount;
 
-                let grav_amount = (G * total_mass) / total_distance.powf(2.0);
-                let grav_force =
-                    (source_position.data - target_position.data).normalize() * grav_amount;
-
-                target_force.data += grav_force * data.clock.dt * (10.0 as f64).powf(10.0);
-            }
-        }
+                            source_force.data -= grav_force * clock.dt * (10.0 as f64).powf(10.0);
+                        },
+                    )
+                },
+            )
     }
 }

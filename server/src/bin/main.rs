@@ -9,12 +9,12 @@ fn main() {
 
     let mut rng = thread_rng();
 
-    for _ in 0..30 {
-        for _ in 0..30 {
+    for _ in 0..10 {
+        for _ in 0..10 {
             let x = rng.gen_range(-100.0, 100.0);
             let y = rng.gen_range(-100.0, 100.0);
-            let vx = rng.gen_range(-3.0, 3.0);
-            let vy = rng.gen_range(-3.0, 3.0);
+            let vx = rng.gen_range(-1.0, 1.0);
+            let vy = rng.gen_range(-1.0, 1.0);
 
             world
                 .create_entity()
@@ -22,7 +22,6 @@ fn main() {
                 .with(components::Position::new(types::Vector::new(x, y)))
                 .with(components::Velocity::new(types::Vector::new(vx, vy)))
                 .with(components::Structure::new())
-                .with(components::Mass::new(1.0))
                 .build();
         }
     }

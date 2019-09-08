@@ -19,7 +19,6 @@ fn setup_world(num_entities: isize) -> (World, Dispatcher<'static, 'static>) {
             .with(components::Position::new(types::Vector::new(x, y)))
             .with(components::Velocity::new(types::Vector::new(vx, vy)))
             .with(components::Structure::new())
-            .with(components::Mass::new(1.0))
             .build();
     }
 
