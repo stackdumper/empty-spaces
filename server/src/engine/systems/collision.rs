@@ -1,4 +1,5 @@
 use super::super::{components, math::collision::AABB};
+use cgmath::InnerSpace;
 use crossbeam::sync::ShardedLock;
 use rayon::iter::ParallelIterator;
 use specs::{BitSet, Entities, Entity, ParJoin, ReadStorage, System, WriteStorage};
@@ -40,18 +41,17 @@ impl<'a> System<'a> for Collision {
                         // 1. skip self
                         let source_id = source_entity.id();
                         let target_id = target_entity.id();
-
+                        
                         if source_id == target_id {
                             return;
                         }
 
-                        // 2. skip deleted entities
+                        // 2. skip if distance is greater than maximal required for collision
+                        if (target_position.data - source_position.data).magnitude2()
+                            > (source_structure.sections.len() + target_structure.sections.len())
+                                .pow(2) as f64
                         {
-                            let deleted = self.deleted.read().unwrap();
-
-                            if deleted.contains(source_id) || deleted.contains(target_id) {
-                                return;
-                            }
+                            return;
                         }
 
                         // 3. get sections

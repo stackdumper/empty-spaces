@@ -34,11 +34,11 @@ pub fn general(c: &mut Criterion) {
         })
     });
 
-    c.bench_function("general - 1000 entities", |b| {
-        let (mut world, mut dispatcher) = setup_world(1000);
-        b.iter(|| {
-            dispatcher.dispatch_par(&mut world);
-            world.maintain();
-        })
-    });
+    // c.bench_function("general - 1000 entities", |b| {
+    //     let (mut world, mut dispatcher) = setup_world(1000);
+    //     b.iter(|| {
+    //         dispatcher.dispatch_par(&mut world);
+    //         world.maintain();
+    //     })
+    // });
 }

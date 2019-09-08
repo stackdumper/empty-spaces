@@ -22,37 +22,46 @@ impl AABB {
     }
 
     pub fn new_complex(sections: &Vec<Vector>) -> AABB {
-        let min = sections.into_iter().fold(sections[0], |a, b| {
-            Vector::new(
-                if a.x < b.x { a.x } else { b.x },
-                if a.y < b.y { a.y } else { b.y },
-            )
-        });
+        let mut min = sections[0];
+        let mut max = sections[0];
 
-        let max = sections.into_iter().fold(sections[0], |a, b| {
-            Vector::new(
-                if a.x > b.x { a.x } else { b.x },
-                if a.y > b.y { a.y } else { b.y },
-            )
-        });
+        for section in sections.iter() {
+            if section.x < min.x {
+                min.x = section.x;
+            }
 
-        AABB {
-            min: Vector::new(min.x - HALF_SIZE, min.y - HALF_SIZE),
-            max: Vector::new(max.x + HALF_SIZE, max.y + HALF_SIZE),
+            if section.y < min.y {
+                min.y = section.y;
+            }
+
+            if section.x > max.x {
+                max.x = section.x;
+            }
+
+            if section.y > max.y {
+                max.y = section.y;
+            }
         }
+
+        min.x -= HALF_SIZE;
+        min.y -= HALF_SIZE;
+        max.x += HALF_SIZE;
+        max.y += HALF_SIZE;
+
+        AABB { min, max }
     }
 
     pub fn collides_complex(sections_a: &Vec<Vector>, sections_b: &Vec<Vector>) -> bool {
         for a_section in sections_a {
             let a = AABB::new(&a_section);
             for b_section in sections_b {
-                if (b_section - a_section).magnitude() <= 1.0 {
-                    let b = AABB::new(&b_section);
+                // if (b_section - a_section).magnitude() <= 1.0 {
+                let b = AABB::new(&b_section);
 
-                    if AABB::collides(&a, &b) {
-                        return true;
-                    }
+                if AABB::collides(&a, &b) {
+                    return true;
                 }
+                // }
             }
         }
         false
