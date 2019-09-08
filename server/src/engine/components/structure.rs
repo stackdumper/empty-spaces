@@ -20,7 +20,12 @@ impl Structure {
         }
     }
 
-    pub fn get_center_of_mass(pos_a: Vector, mass_a: f64, pos_b: Vector, mass_b: f64) -> Vector {
+    pub fn calculate_center_of_mass(
+        pos_a: Vector,
+        mass_a: f64,
+        pos_b: Vector,
+        mass_b: f64,
+    ) -> Vector {
         let x = (mass_a * pos_a.x + mass_b * pos_b.x) / (mass_a + mass_b);
         let y = (mass_a * pos_a.y + mass_b * pos_b.y) / (mass_a + mass_b);
 
@@ -35,7 +40,7 @@ impl Structure {
             v.x = (v.x - self_position.x).round();
             v.y = (v.y - self_position.y).round();
 
-            self.center_of_mass = Structure::get_center_of_mass(
+            self.center_of_mass = Structure::calculate_center_of_mass(
                 self.center_of_mass,
                 self.sections.len() as f64,
                 v,
@@ -48,20 +53,24 @@ impl Structure {
 
     // return sections translated to global coordinate space
     pub fn get_sections(&self, self_position: &Vector) -> Vec<Vector> {
-        self.sections
-            .clone()
-            .into_iter()
-            .map(|mut v| {
-                v.x += self_position.x;
-                v.y += self_position.y;
+        let mut sections: Vec<Vector> = Vec::with_capacity(self.sections.len());
 
-                v
-            })
-            .collect()
+        for s in self.sections.iter() {
+            sections.push(Vector::new(s.x + self_position.x, s.y + self_position.y));
+        }
+
+        sections
     }
 
     pub fn get_mass(&self) -> f64 {
         self.sections.len() as f64
+    }
+
+    pub fn get_center_of_mass(&self, self_position: &Vector) -> Vector {
+        Vector::new(
+            self.center_of_mass.x + self_position.x,
+            self.center_of_mass.y + self_position.y,
+        )
     }
 }
 
@@ -88,7 +97,12 @@ mod tests {
     #[test]
     fn get_center_of_mass() {
         assert_eq!(
-            Structure::get_center_of_mass(Vector::new(0.0, 0.0), 1.0, Vector::new(0.0, 1.0), 1.0),
+            Structure::calculate_center_of_mass(
+                Vector::new(0.0, 0.0),
+                1.0,
+                Vector::new(0.0, 1.0),
+                1.0
+            ),
             Vector::new(0.0, 0.5)
         )
     }

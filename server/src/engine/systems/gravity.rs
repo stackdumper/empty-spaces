@@ -23,18 +23,24 @@ impl<'a> System<'a> for Gravity {
             .par_join()
             .for_each(
                 |(source_entity, source_structure, source_position, source_force)| {
-                    (&entity, &structure, &position).join().for_each(
-                        |(target_entity, target_structure, target_position)| {
+                    (&entity, &position, &structure).join().for_each(
+                        |(target_entity, target_position, target_structure)| {
                             if source_entity.id() == target_entity.id() {
                                 return;
                             }
 
+                            let source_center_of_mass =
+                                source_structure.get_center_of_mass(&source_position.data);
+
+                            let target_center_of_mass =
+                                target_structure.get_center_of_mass(&target_position.data);
+
                             let total_mass =
                                 source_structure.get_mass() + target_structure.get_mass();
                             let total_distance =
-                                source_position.data.distance(target_position.data);
+                                source_center_of_mass.distance(target_center_of_mass);
                             let direction =
-                                (source_position.data - target_position.data).normalize();
+                                (source_center_of_mass - target_center_of_mass).normalize();
                             let amount = (G * total_mass) / total_distance.powf(2.0);
                             let grav_force = direction * amount;
 
