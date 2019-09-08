@@ -1,4 +1,4 @@
-use super::super::{components, math::collision, types::Vector};
+use super::super::{components, math::collision};
 use cgmath::InnerSpace;
 use shred::{ResourceId, World};
 use specs::{BitSet, Entities, Join, ReadStorage, System, SystemData, WriteStorage};

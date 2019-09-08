@@ -1,7 +1,7 @@
 use super::super::{components, resources};
 use cgmath::{InnerSpace, MetricSpace};
 use shred::{ResourceId, World};
-use specs::{Entities, Join, ParJoin, Read, ReadStorage, System, SystemData, WriteStorage};
+use specs::{Entities, Join, Read, ReadStorage, System, SystemData, WriteStorage};
 
 const G: f64 = 6.67e-11f64;
 

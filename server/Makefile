@@ -8,7 +8,7 @@ test:
 
 .PHONY: bench
 bench:
-	cargo bench -- --nocapture
+	cargo bench 
 
 .PHONY: format
 format:

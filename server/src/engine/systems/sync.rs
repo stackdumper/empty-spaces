@@ -1,12 +1,10 @@
 use super::super::components;
-use serde_json::to_string;
+use serde_json;
 use shred::{ResourceId, World};
-use specs::{prelude::SystemData, Join, ReadStorage, System};
-use std::{
-    ops::Deref,
-    sync::{Arc, Mutex},
-    thread,
-};
+use specs::{Join, ReadStorage, System, SystemData};
+use std::ops::Deref;
+use std::sync::{Arc, Mutex};
+use std::thread;
 use ws;
 
 pub struct Sync {
@@ -49,7 +47,7 @@ impl<'a> System<'a> for Sync {
                 (&data.position, &data.structure).join().collect();
 
             // send entities to client
-            let message = ws::Message::Text(to_string(&ents).unwrap());
+            let message = ws::Message::Text(serde_json::to_string(&ents).unwrap());
 
             let _ = connection.broadcast(message);
         }

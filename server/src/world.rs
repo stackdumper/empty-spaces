@@ -1,5 +1,5 @@
-use super::engine::{components, resources, systems, types};
-use specs::{Builder, Dispatcher, DispatcherBuilder, World, WorldExt};
+use super::engine::{components, resources, systems};
+use specs::{Dispatcher, DispatcherBuilder, World, WorldExt};
 
 pub fn create_world() -> (World, Dispatcher<'static, 'static>) {
     // create world
@@ -18,10 +18,10 @@ pub fn create_world() -> (World, Dispatcher<'static, 'static>) {
     // create dispatcher with systems
     let dispatcher = DispatcherBuilder::new()
         .with(systems::Gravity, "gravity", &[])
-        .with(systems::Force, "force", &[])
-        .with(systems::Velocity, "velocity", &[])
-        .with(systems::Collision::new(), "collision", &[])
-        .with(systems::Sync::new("127.0.0.1:8000"), "sync", &[])
+        .with(systems::Force, "force", &["gravity"])
+        .with(systems::Velocity, "velocity", &["force"])
+        .with(systems::Collision::new(), "collision", &["velocity"])
+        .with(systems::Sync::new("127.0.0.1:8000"), "sync", &["collision"])
         .build();
 
     return (world, dispatcher);
